@@ -115,7 +115,7 @@ class Analyse implements Runnable {
                         List<FileLocation> locations = sourceAnalyser.analyseProject(path, vurnableVersionUsed);
 
                         for (FileLocation location : locations) {
-                            System.out.println(location.path + ":" + location.line + ":8: warning: " + location.warning + " (vulnerable version)");
+                            LoggerHelper.log(LogLevel.INFO, location.path + ":" + location.line + ":8: warning: " + location.warning + " (vulnerable version)");
                         }
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
@@ -146,12 +146,12 @@ class Analyse implements Runnable {
 
                             if (library.directDependency != null) {
                                 if (library.directDependency) {
-                                    System.out.println(dataString.toString());
+                                    LoggerHelper.log(LogLevel.INFO, dataString.toString());
                                 } else {
-                                    System.out.println("Indirect " + dataString.toString());
+                                    LoggerHelper.log(LogLevel.INFO, "Indirect " + dataString.toString());
                                 }
                             } else {
-                                System.out.println(dataString.toString());
+                                LoggerHelper.log(LogLevel.INFO, dataString.toString());
                             }
                         }
                     } catch (MalformedURLException e) {
@@ -167,53 +167,53 @@ class Analyse implements Runnable {
                     findCpeAnalyser.cpeOnlyFromFile = cpeOnlyFromFile;
 
                     if (specificValue != null) {
-                        System.out.println("For library name: " + specificValue);
+                        LoggerHelper.log(LogLevel.INFO, "For library name: " + specificValue);
                         String cpe = findCpeAnalyser.findCPEForLibrary(specificValue);
                         if (cpe != null) {
-                            System.out.println("found cpe: " + cpe);
+                            LoggerHelper.log(LogLevel.INFO, "found cpe: " + cpe);
                         } else {
-                            System.out.println("no found cpe");
+                            LoggerHelper.log(LogLevel.INFO, "no found cpe");
                         }
                     } else {
-                        System.out.println("[!] Currently only analysis with specific value supported.");
+                        LoggerHelper.log(LogLevel.INFO, "[!] Currently only analysis with specific value supported.");
                     }
                     break;
 
                 case querycve:
                     VulnerabilityAnalyser analyser = new VulnerabilityAnalyser(settings);
                     if (specificValue != null) {
-                        System.out.println("Vulnerabilities for cpe: " + specificValue);
+                        LoggerHelper.log(LogLevel.INFO, "Vulnerabilities for cpe: " + specificValue);
                         //TODO: check if cpe has correct format??
 
                         List<CVEData> cveList = analyser.queryVulnerabilitiesFor(specificValue);
-                        System.out.println("Found vulnerabilities: " + cveList);
+                        LoggerHelper.log(LogLevel.INFO, "Found vulnerabilities: " + cveList);
                         for (CVEData cve : cveList) {
                             if (cve.cve != null && cve.cve.description != null) {
-                                System.out.println("Vulnerability: " + cve.cve.description);
+                                LoggerHelper.log(LogLevel.INFO, "Vulnerability: " + cve.cve.description);
                                 if (cve.configuration != null) {
                                     List<CPEMatch> affectedVersions = cve.configuration.getAffectedVersions();
                                     for (CPEMatch version : affectedVersions) {
-                                        System.out.println("    cpe: " + version.cpeString);
+                                        LoggerHelper.log(LogLevel.INFO, "    cpe: " + version.cpeString);
                                         if (version.versionStartIncluding != null) {
-                                            System.out.println("    startincluding: " + version.versionStartIncluding);
+                                            LoggerHelper.log(LogLevel.INFO, "    startincluding: " + version.versionStartIncluding);
                                         }
                                         if (version.versionStartExcluding != null) {
-                                            System.out.println("    startexcluding: " + version.versionStartExcluding);
+                                            LoggerHelper.log(LogLevel.INFO, "    startexcluding: " + version.versionStartExcluding);
                                         }
                                         if (version.versionEndIncluding != null) {
-                                            System.out.println("    endtincluding: " + version.versionEndIncluding);
+                                            LoggerHelper.log(LogLevel.INFO, "    endtincluding: " + version.versionEndIncluding);
                                         }
                                         if (version.versionEndExcluding != null) {
-                                            System.out.println("    endtexcluding: " + version.versionEndExcluding);
+                                            LoggerHelper.log(LogLevel.INFO, "    endtexcluding: " + version.versionEndExcluding);
                                         }
                                     }
                                 }
                             } else {
-                                System.out.println("[!] No description");
+                                LoggerHelper.log(LogLevel.ERROR, "[!] No description");
                             }
                         }
                     } else {
-                        System.out.println("[!] Currently only analysis with specific value supported.");
+                        LoggerHelper.log(LogLevel.INFO, "[!] Currently only analysis with specific value supported.");
                     }
                     break;
 
@@ -224,19 +224,19 @@ class Analyse implements Runnable {
                         if (components.length == 2) {
                             String name = components[0].toLowerCase();
                             String version = components[1];
-                            System.out.println("name: " + name + ", version: " + version);
+                            LoggerHelper.log(LogLevel.INFO, "name: " + name + ", version: " + version);
 
                             Tuple translation = translateAnalyser.translateLibraryVersion(name, version);
                             if (translation != null) {
-                                System.out.println("translation: " + translation.getValue(0).toString().toLowerCase() + ":" + (translation.getValue(2) != null ? translation.getValue(2) : components[1]));
+                                LoggerHelper.log(LogLevel.INFO, "translation: " + translation.getValue(0).toString().toLowerCase() + ":" + (translation.getValue(2) != null ? translation.getValue(2) : components[1]));
                             } else {
-                                System.out.println("no translation");
+                                LoggerHelper.log(LogLevel.INFO, "no translation");
                             }
                         } else {
-                            System.out.println("[!] Specific value should be of form: name,version");
+                            LoggerHelper.log(LogLevel.ERROR, "[!] Specific value should be of form: name,version");
                         }
                     } else {
-                        System.out.println("[!] Currently only analysis with specific value supported.");
+                        LoggerHelper.log(LogLevel.ERROR, "[!] Currently only analysis with specific value supported.");
                     }
                     break;
 
@@ -260,7 +260,7 @@ class Analyse implements Runnable {
                     }
 
                     for (String library : results.keySet()) {
-                        System.out.println(library + ": cpe: " + results.get(library).getValue0() + ", vulnerabilities " + results.get(library).getValue1().size());
+                        LoggerHelper.log(LogLevel.INFO, library + ": cpe: " + results.get(library).getValue0() + ", vulnerabilities " + results.get(library).getValue1().size());
                     }
                     break;
 
@@ -277,7 +277,7 @@ class Analyse implements Runnable {
                     for (Map.Entry<String, CPE> entry : printCpeAnalyser.cpeDictionary.dictionary.entrySet()) {
                         String libraryName = entry.getKey();
                         CPE cpe = entry.getValue();
-                        System.out.println(libraryName + " " + (cpe != null ? cpe.value : "--"));
+                        LoggerHelper.log(LogLevel.INFO, libraryName + " " + (cpe != null ? cpe.value : "--"));
                     }
                     break;
 

@@ -483,7 +483,7 @@ public class DependencyAnalyser implements AutoCloseable {
         try {
             Files.write(projectsPath, json.getBytes());
         } catch (IOException e) {
-            System.out.println("[!] Could not save projects");
+            LoggerHelper.log(LogLevel.ERROR, "[!] Could not save projects");
         }
     }
     private void checkFolder() {
@@ -524,7 +524,7 @@ public class DependencyAnalyser implements AutoCloseable {
             String resolvedInProject = findPackageResolved(homePath);
             if (resolvedInProject != null) {
                 resolvedPath = resolvedInProject;
-                System.out.println("Found path: " + resolvedPath);
+                LoggerHelper.log(LogLevel.INFO, "Found path: " + resolvedPath);
             }
         }
 
@@ -532,7 +532,7 @@ public class DependencyAnalyser implements AutoCloseable {
     }
 
     private String findPackageResolved(String homePath) {
-        System.out.println("Try to find resolved path in home: " + homePath);
+        LoggerHelper.log(LogLevel.INFO, "Try to find resolved path in home: " + homePath);
 
         File folder = new File(homePath);
         File[] listOfFiles = folder.listFiles();

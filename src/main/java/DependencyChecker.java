@@ -94,7 +94,7 @@ class DependencyChecker {
                 subTarget = " - " + library.subtarget;
             }
 
-            String dependencyType = library.directDependency ? "Direct" : "Indirect";
+            String dependencyType = (library.directDependency != null && library.directDependency) ? "Direct" : "Indirect";
             LoggerHelper.log(LogLevel.DEBUG, "[i] " + dependencyType + ": " + library.name + " " + library.versionString + subTarget);
         }
 

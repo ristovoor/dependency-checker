@@ -108,6 +108,7 @@ public class CPEFinder implements AutoCloseable{
         try (FileInputStream fileInputStream = new FileInputStream(gzipFile);
              GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = gzipInputStream.read(buffer)) != -1) {

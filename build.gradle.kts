@@ -22,4 +22,5 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    //jvmArgs(['-Xmx2g']) // Set maximum heap size to 2 gigabytes
 }
