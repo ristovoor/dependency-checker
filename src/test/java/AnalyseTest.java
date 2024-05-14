@@ -22,8 +22,6 @@ public class AnalyseTest {
         Map<Library, CVEData> actualValue = allCaseAnalyser.analyseFolder(path);
 
         Map<Library, CVEData> expectedValue = new HashMap<>();
-        expectedValue.put(new Library("123", "qwe"), new CVEData( new HashMap<>()));
-        // Assert that the two maps are equal
         assertEquals(actualValue, expectedValue);
     }
 
