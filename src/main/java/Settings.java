@@ -15,9 +15,10 @@ public class Settings {
     public URL specDirectory;
 
     public Settings() throws MalformedURLException {
-        File home = new File(System.getProperty("user.home"));
-        this.homeFolder = new URL(new File(home, "DependencyInfo").toURI().toString());
-        this.specDirectory = new URL(new File(this.homeFolder.getPath(), "Cocoapods").toURI().toString());
+        String homeFolderPath = System.getProperty("user.home") + "/DependencyInfo";
+        this.homeFolder = new URL("file:///" + homeFolderPath);
+        String specDirectoryPath = homeFolderPath + "/Cocoapods";
+        this.specDirectory = new URL("file:///" + specDirectoryPath);
     }
 }
 class SettingsController implements AutoCloseable {

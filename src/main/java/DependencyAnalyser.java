@@ -20,13 +20,13 @@ public class DependencyAnalyser implements AutoCloseable {
     public URL folder;
     public boolean changed = false;
     public final Settings settings;
-    public String specDirectory;
+    public Path specDirectory;
     public boolean onlyDirectDependencies = false;
 
-    public DependencyAnalyser(Settings settings) throws MalformedURLException {
+    public DependencyAnalyser(Settings settings) throws MalformedURLException, URISyntaxException {
         this.settings = settings;
         this.folder = settings.homeFolder;
-        Path translationJsonPath = Paths.get(this.folder.getPath(), "translation.json");
+        Path translationJsonPath = Paths.get(this.folder.toURI()).resolve("translation.json");
         this.url = translationJsonPath.toUri().toURL();
         try {
             byte[] data = Files.readAllBytes(Paths.get(url.toURI()));
@@ -42,7 +42,7 @@ public class DependencyAnalyser implements AutoCloseable {
         } catch (IOException | URISyntaxException e) {
             translations = new Translations(new Date(), new HashMap<>());
         }
-        this.specDirectory = settings.specDirectory.getPath();
+        this.specDirectory = Paths.get(settings.specDirectory.toURI());
         if (!checkSpecDirectory()) {
             checkoutSpecDirectory();
         }
@@ -92,7 +92,7 @@ public class DependencyAnalyser implements AutoCloseable {
     }
 
     public boolean checkSpecDirectory() {
-        Path directory = Paths.get(specDirectory);
+        Path directory = Paths.get(specDirectory.toUri());
         Path specPath = directory.resolve("Specs");
 
         LoggerHelper.log(LogLevel.DEBUG, "[*] Checking spec path: " + specPath);
@@ -104,7 +104,7 @@ public class DependencyAnalyser implements AutoCloseable {
 
     public void checkoutSpecDirectory() {
         String source = "https://github.com/CocoaPods/Specs.git";
-        String directory = specDirectory;
+        String directory = String.valueOf(specDirectory);
         LoggerHelper.log(LogLevel.DEBUG, "[*] Checking out spec directory into " + directory);
 
         String[] arguments = {"clone", source, directory};
@@ -115,7 +115,7 @@ public class DependencyAnalyser implements AutoCloseable {
 
     public void updateSpecDirectory() {
         LoggerHelper.log(LogLevel.DEBUG, "[*] Updating spec directory ...");
-        String directory = specDirectory;
+        String directory = String.valueOf(specDirectory);
         String gitPath = directory + "/.git";
 
         String[] arguments = {"--git-dir", gitPath, "--work-tree", directory, "pull"};
@@ -406,6 +406,7 @@ public class DependencyAnalyser implements AutoCloseable {
 
         return libraries;
     }
+
     public static List<Library> handleCarthageFile(String path) {
         LoggerHelper.log(LogLevel.DEBUG, "[*] Parsing Carthage resolution file " + path);
         List<Library> libraries = new ArrayList<>();
@@ -571,7 +572,7 @@ public class DependencyAnalyser implements AutoCloseable {
     public Tuple translateLibraryVersion(String name, String version) {
         LoggerHelper.log(LogLevel.DEBUG, "[*] Translating library name: " + name + ", version: " + version + " ...");
 
-        String specSubPath = this.specDirectory + "/Specs";
+        String specSubPath = this.specDirectory + File.separator + "Specs";
 
         Translation translation = this.translations.translations.get(name);
         if (translation != null) {

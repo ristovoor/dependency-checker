@@ -121,7 +121,7 @@ class DependencyChecker {
         int count = 0;
         for (AnalysedLibrary analysedLibrary : analysedLibraries) {
             String name = analysedLibrary.name;
-            String  cpe = cpeFinder.findCPEForLibrary(name);
+            String  cpe = cpeFinder.findCPEForLibrary("grpc/grpc-swift");
             if (cpe != null) {
                 count++;
                 analysedLibrary.cpe = cpe;
