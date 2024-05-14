@@ -532,8 +532,8 @@ public class DependencyAnalyser implements AutoCloseable {
         return new DependencyFile(DependencyType.SWIFT_PM, definitionPath, resolvedPath, definitionPath);
     }
 
-    private String findPackageResolved(String homePath) {
-        LoggerHelper.log(LogLevel.INFO, "Try to find resolved path in home: " + homePath);
+    private static String findPackageResolved(String homePath) {
+        System.out.println("Try to find resolved path in home: " + homePath);
 
         File folder = new File(homePath);
         File[] listOfFiles = folder.listFiles();
@@ -541,7 +541,11 @@ public class DependencyAnalyser implements AutoCloseable {
         if (listOfFiles != null) {
             for (File file : listOfFiles) {
                 if (file.isDirectory() && file.getName().endsWith(".xcodeproj")) {
-                    String composedPath = file.getPath() + "/project.xcworkspace/xcshareddata/swiftpm/Package.resolved";
+                    String composedPath = file.getPath() + File.separator +
+                            "project.xcworkspace" + File.separator +
+                            "xcshareddata" + File.separator +
+                            "swiftpm" + File.separator +
+                            "Package.resolved";
 
                     File resolvedFile = new File(composedPath);
                     if (resolvedFile.exists()) {
