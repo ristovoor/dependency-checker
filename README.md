@@ -1,4 +1,6 @@
-Program has been used with IntelliJ Compiler
+Program has been used with IntelliJ Compiler.
+
+
 Example args line "analyse -a all -path /Users/test/TestProjektid/VulnerableApp-3 -f true"
 
 If encoutering OutOfMemory error "-Xmx4g" should be added to VM options.
